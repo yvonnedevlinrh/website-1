@@ -1,6 +1,27 @@
 const autoprefixer = require('autoprefixer');
-const { purgeCSSPlugin } = require('@fullhuman/postcss-purgecss');
-const whitelister = require('purgecss-whitelister');
+const purgeCSSPlugin = require('@fullhuman/postcss-purgecss');
+const glob = require('glob');
+const fs = require('fs');
+const path = require('path');
+
+/**
+ * Extracts CSS selectors from SCSS/CSS files matching the given glob patterns.
+ * Replaces purgecss-whitelister to avoid its vulnerable lodash transitive dep.
+ */
+function whitelister(patterns) {
+    const selectors = new Set();
+    const files = patterns.flatMap((pattern) => glob.sync(pattern));
+    for (const file of files) {
+        const content = fs.readFileSync(path.resolve(file), 'utf8');
+        const matches = content.matchAll(
+            /(?:^|[\s,{;])([.#])([a-zA-Z_][\w-]*)/g
+        );
+        for (const match of matches) {
+            selectors.add(match[2]);
+        }
+    }
+    return [...selectors];
+}
 
 module.exports = {
     plugins: [
