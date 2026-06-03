@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04@sha256:253b0ee40a5afd4f295640f9f90aed206953962fab56bfa14d9fcb593f33dc47
 
 # hadolint ignore=DL3008
 RUN apt-get update && \
